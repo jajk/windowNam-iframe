@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+	<head>
+		<title>a.html</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	</head>
+	<body>
+		<script>
+		    /*
+			    addIframeTag:动态创建iframe，通过src获得相应文档
+				Param: src -->动态给创建iframe的src赋值
+			*/
+			function addIframeTag(src){
+			    //在loadFn函数中，用于判断iframe加载情况
+			    var state = 0;
+				//创建iframe
+				var iframe = document.createElement('iframe');
+				//loadFn：跨域获取数据，如b.html
+				var loadFn = function(){
+				    if (state === 1) {
+					    //获取window.name数据
+						var data = iframe.contentWindow.name;    
+						//相关操作，如alert获取的数据
+						alert(data);
+						//清除动态创建的iframe
+						iframe.contentWindow.document.write('');
+						iframe.contentWindow.close();
+						document.body.removeChild(iframe);
+					} else if (state === 0) {
+						state = 1;
+						// 将src变为a.html的同源域
+						iframe.src = "a.html";    
+					}      
+				};
+				//给创建的iframe赋予指定的src值
+				iframe.src = src;
+				//当iframe加载完文件后，触发onload事件
+				if (iframe.attachEvent) {
+					iframe.attachEvent('onload', loadFn);
+				} else {
+					iframe.onload  = loadFn;
+				}
+				//隐藏iframe
+				iframe.style.display = 'none';
+				//将创建的iframe加入body中
+				document.body.appendChild(iframe);
+			};
+			window.onload = function(){
+			    addIframeTag('b.html');
+			};
+		</script>
+	</body>
+</html>
